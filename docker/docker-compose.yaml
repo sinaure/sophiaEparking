@@ -1,0 +1,45 @@
+version: "3"
+services:
+  rabbitmq-sophia:
+     image: rabbitmq:3.6.3-management
+     container_name: sophia-rabbitmq
+     ports:
+        - "5772:5672"
+        - "5771:5671"
+        - "16672:15672"
+        - "16671:15671"
+     environment:
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
+     volumes:
+      - ./rabbitmq/init.sh:/init.sh 
+      - /var/lib/rabbitmq
+     command:
+      - rabbitmq-server 
+
+  #spring-sophia:
+    #image: sinaure/parking:1.2.1
+    #container_name: spring-sophia
+    #depends_on:
+    # - rabbitmq-sophia
+    # - pg
+    #ports:
+    #  - "7788:7788"
+      
+  pg:
+    image: postgres:11.1
+    container_name: sophia-pg
+    ports:
+      - 5432:5432
+    volumes:
+      - /var/lib/postgresql/data/pg_data
+    environment:
+      POSTGRES_PASSWORD: 65k
+      POSTGRES_DB: sophia
+      POSTGRES_USER: Jpasdetemps
+      POSTGRES_HOST: postgreshost
+      POSTGRES_PORT: 5432
+      PGDATA: /var/lib/postgresql/data/pg_data
+   
+      

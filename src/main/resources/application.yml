@@ -1,0 +1,41 @@
+logging:
+  level:
+    org.springframework: ERROR
+    com.sinaure: DEBUG
+
+spring:
+  profiles:
+    active: dev
+  datasource: 
+    url: jdbc:postgresql://192.168.99.100:5432/postgres
+    username: Jpasdetemps
+    password: 65k
+  jpa:
+    hibernate.ddl-auto: create 
+    properties: 
+      hibernate:
+        temp: 
+          use_jdbc_metadata_defaults:false 
+    
+email: yaml@mkyong.com
+thread-pool: 10
+
+
+
+wordpress:
+  menus:
+    - title: Home
+      name: Home
+      path: /
+    - title: About
+      name: About
+      path: /about
+  themes:
+    default-folder: /wp-content/themes/mkyong
+  servers:
+    - ip: 127.0.0.1
+      path: /dev1
+    - ip: 127.0.0.2
+      path: /dev2
+    - ip: 127.0.0.3
+      path: /dev3
