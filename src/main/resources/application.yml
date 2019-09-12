@@ -7,16 +7,18 @@ spring:
   profiles:
     active: dev
   datasource: 
-    url: jdbc:postgresql://192.168.99.100:5432/postgres
+    url: jdbc:postgresql://192.168.99.100:5432/sophia
     username: Jpasdetemps
     password: 65k
+    initialize: true
   jpa:
     hibernate.ddl-auto: create 
     properties: 
       hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         temp: 
-          use_jdbc_metadata_defaults:false 
-    
+          use_jdbc_metadata_defaults: false
+          
 email: yaml@mkyong.com
 thread-pool: 10
 

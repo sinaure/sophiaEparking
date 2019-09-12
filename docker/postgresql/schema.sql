@@ -4,16 +4,5 @@ CREATE TABLE slot(id SERIAL  PRIMARY KEY,slot_type text CHECK (slot_type = 'stan
 CREATE TABLE logs(id SERIAL  PRIMARY KEY,start_at timestamp,end_at timestamp, plaque character(35));
 
 
-INSERT INTO parking(id, parking_name) VALUES    ("jsdhgfjybhgjhgjyygysd","saint philippe");
-INSERT INTO parking(id, parking_name) VALUES    ("wbcxkscdjsgcsjycg","garbajaire");
-INSERT INTO parking(id, parking_name) VALUES    ("jhsqgyqvqhgvqhvhqg","plage gravette");
 
-INSERT INTO rule(id, fix, variable) VALUES    (1, 10, 2.7)
-INSERT INTO rule(id, fix, variable) VALUES    (2, 7, 3.1)
-
-INSERT INTO slot(slot_type,  parking_code, rule_id) VALUES    ("standard", "jsdhgfjybhgjhgjyygysd", 1)
-INSERT INTO slot(slot_type,  parking_code, rule_id) VALUES    ("standard", "jsdhgfjybhgjhgjyygysd", 1)
-INSERT INTO slot(slot_type,  parking_code, rule_id) VALUES    ("20kw", "jsdhgfjybhgjhgjyygysd", 2)
-INSERT INTO slot(slot_type,  parking_code, rule_id) VALUES    ("20kw", "jsdhgfjybhgjhgjyygysd", 2)
-INSERT INTO slot(slot_type,  parking_code, rule_id) VALUES    ("20kw", "jsdhgfjybhgjhgjyygysd", 2)
 
