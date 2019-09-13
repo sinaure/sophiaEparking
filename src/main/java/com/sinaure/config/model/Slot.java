@@ -1,5 +1,7 @@
 package com.sinaure.config.model;
 
+import java.util.Random;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,9 +14,18 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "slot")
 public class Slot {
+	public Slot() {
+		this.id = new Random().nextLong();
+		this.available = true;
+	}
+	public Slot(CarType carType) {
+		this.id = new Random().nextLong();
+		this.available = true;
+		this.slot_type = carType.toString();
+	}
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
      
     @Column
     private String slot_type;
@@ -33,11 +44,11 @@ public class Slot {
     @JoinColumn(name = "parking_code")
     private Parking parking;
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

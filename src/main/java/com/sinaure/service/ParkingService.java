@@ -27,7 +27,9 @@ public class ParkingService {
     private LogRepository logRepository;
 
 	public Boolean availableSlotFor(Client client, Parking parking) {
-		Slot s = parking.getSlots().stream().filter(slot -> client.getCarType().toString().equals(slot.getSlot_type()) && slot.isAvailable()).findAny().orElse(null);
+		Slot s = parking.getSlots().stream().filter(
+				slot ->	client.getCarType().name().equals(slot.getSlot_type()) && slot.isAvailable()
+		).findAny().orElse(null);
 		return s == null ?  false :  true;
 	}
 	
@@ -36,7 +38,7 @@ public class ParkingService {
 	}
 	
 	public Boolean canPark(Client client, Slot slot) {
-		return slot.isAvailable() && slot.getSlot_type().equalsIgnoreCase(client.getCarType().toString())  ?  true :  false;
+		return slot.isAvailable() && slot.getSlot_type().equalsIgnoreCase(client.getCarType().name())  ?  true :  false;
 	}
 	
 	public BigDecimal calculateFee(Client client, Parking parking) {

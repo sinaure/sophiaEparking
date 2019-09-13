@@ -1,10 +1,12 @@
 package com.sinaure.test;
 
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -50,20 +52,15 @@ public class ParkingServiceTest {
 		Parking parking = new Parking();
 		parking.setId("ticketless parking");
 		parking.setParking_name("saint philippe");
-		Slot slot1 = new Slot();
-		slot1.setSlot_type(CarType.standard.toString());
+		Slot slot1 = new Slot(CarType.standard);
 		slot1.setParking(parking);
-		Slot slot2 = new Slot();
-		slot2.setSlot_type(CarType.standard.toString());
+		Slot slot2 = new Slot(CarType.standard);
 		slot2.setParking(parking);
-		Slot slot3 = new Slot();
-		slot3.setSlot_type(CarType.standard.toString());
+		Slot slot3 = new Slot(CarType.standard);
 		slot3.setParking(parking);
-		Slot slot4 = new Slot();
-		slot4.setSlot_type(CarType.standard.toString());
+		Slot slot4 = new Slot(CarType.standard);
 		slot4.setParking(parking);
-		Slot slot5 = new Slot();
-		slot5.setSlot_type(CarType.electric20kw.toString());
+		Slot slot5 = new Slot(CarType.electric20kw);
 		slot5.setParking(parking);
 		parking.getSlots().add(slot1);
 		parking.getSlots().add(slot2);
@@ -80,20 +77,20 @@ public class ParkingServiceTest {
 
 		Mockito.when(logRepository.findByPlaque(clientElectric.getPlaque())).thenReturn(logElectricCarCient);
 		Mockito.when(logRepository.findByPlaque(clientStandard.getPlaque())).thenReturn(logElectricCarCient);
-		Mockito.when(parkingRepository.findById("ticketless parking").orElse(null)).thenReturn(parking);
+		Mockito.when(parkingRepository.findById("ticketless parking")).thenReturn(Optional.of(parking));
 
 	}
 
 	
 
 	@Test
-	public void clientCanPark() {
+	public void standardClientCanPark() {
 		Parking parking = parkingRepository.findById("ticketless parking").orElse(null);
 		assertTrue(parkingService.availableSlotFor(clientStandard, parking));
 	}
 	@Test
-	public void clientCanNotPark() {
+	public void powerfulElectricCarsCanNotPark() {
 		Parking parking = parkingRepository.findById("ticketless parking").orElse(null);
-		assertTrue(parkingService.availableSlotFor(clientElectricPowerful, parking));
+		assertFalse(parkingService.availableSlotFor(clientElectricPowerful, parking));
 	}
 }
