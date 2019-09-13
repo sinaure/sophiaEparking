@@ -147,5 +147,21 @@ public class ParkingServiceTest {
 		assertTrue(fee1.compareTo(fee2) == 1);
 	}
 	
+	@Test
+	public void checkCanParkVehicleInSpot() {
+		Client cli = new Client(CarType.electric20kw, "ZZ5676YY"); // is parked at slot1
+		Slot mySlot = new Slot(CarType.electric20kw);
+		Slot mySlot1 = new Slot(CarType.electric50kw);
+		assertTrue(this.parkingService.canPark(cli, mySlot));
+		assertFalse(this.parkingService.canPark(cli, mySlot1));
+	}
+	
+	@Test
+	public void checkCantParkIfSpotUnavailable() {
+		Client cli = new Client(CarType.electric20kw, "ZZ5676YY"); // is parked at slot1
+		Slot mySlot = new Slot(CarType.electric20kw);
+		mySlot.setAvailable(false);
+		assertFalse(this.parkingService.canPark(cli, mySlot));
+	}
 	
 }
