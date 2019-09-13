@@ -8,16 +8,9 @@ import org.springframework.stereotype.Component;
 public class GlobalProperties {
 
     //thread-pool , relax binding
-    private int threadPool;
+    private String repository;
     private String email;
 
-    public int getThreadPool() {
-        return threadPool;
-    }
-
-    public void setThreadPool(int threadPool) {
-        this.threadPool = threadPool;
-    }
 
     public String getEmail() {
         return email;
@@ -27,10 +20,18 @@ public class GlobalProperties {
         this.email = email;
     }
 
-    @Override
+    public String getRepository() {
+		return repository;
+	}
+
+	public void setRepository(String repository) {
+		this.repository = repository;
+	}
+
+	@Override
     public String toString() {
         return "GlobalProperties{" +
-                "threadPool=" + threadPool +
+                "repository=" + repository +
                 ", email='" + email + '\'' +
                 '}';
     }

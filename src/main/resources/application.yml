@@ -6,6 +6,13 @@ logging:
 spring:
   profiles:
     active: dev
+  
+email: sinaure@gmail.com
+repository: github/sinaure          
+---
+
+spring:
+  profiles: dev
   datasource: 
     url: jdbc:postgresql://192.168.99.100:5432/sophia
     username: Jpasdetemps
@@ -18,9 +25,24 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         temp: 
           use_jdbc_metadata_defaults: false
-          
-email: yaml@mkyong.com
-thread-pool: 10
+
+---
+
+spring:
+  profiles: prod
+  datasource: 
+    url: jdbc:postgresql://sophia-pg:5432/sophia
+    username: Jpasdetemps
+    password: 65k
+    initialize: true
+  jpa:
+    hibernate.ddl-auto: update 
+    properties: 
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        temp: 
+          use_jdbc_metadata_defaults: false
+      
 
 
 

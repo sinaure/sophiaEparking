@@ -49,7 +49,7 @@ public class Slot {
 		this.slot_type = slot_type;
 	}
 
-	public Boolean getAvailable() {
+	public Boolean isAvailable() {
 		return available;
 	}
 
