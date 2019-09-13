@@ -23,6 +23,13 @@ public class Slot {
 		this.available = true;
 		this.slot_type = carType.toString();
 	}
+	public Slot(CarType carType, Rule rule) {
+		this.id = new Random().nextLong();
+		this.available = true;
+		this.slot_type = carType.toString();
+		this.rule = rule;
+	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

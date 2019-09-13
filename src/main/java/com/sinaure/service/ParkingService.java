@@ -1,13 +1,15 @@
 package com.sinaure.service;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
+import java.util.List;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,6 +19,7 @@ import com.sinaure.config.model.Log;
 import com.sinaure.config.model.Parking;
 import com.sinaure.config.model.Slot;
 import com.sinaure.repository.LogRepository;
+import com.sinaure.repository.ParkingRepository;
 
 @Component
 public class ParkingService {
@@ -25,6 +28,9 @@ public class ParkingService {
 
 	@Autowired
     private LogRepository logRepository;
+	
+	@Autowired
+    private ParkingRepository parkingRepository;
 
 	public Boolean availableSlotFor(Client client, Parking parking) {
 		Slot s = parking.getSlots().stream().filter(
@@ -40,11 +46,43 @@ public class ParkingService {
 	public Boolean canPark(Client client, Slot slot) {
 		return slot.isAvailable() && slot.getSlot_type().equalsIgnoreCase(client.getCarType().name())  ?  true :  false;
 	}
+	public void parkToSlot(Slot s, Client client) {
+		s.setAvailable(false);
+		s.setPlaque(client.getPlaque());
+		
+		
+		// write to logs
+		Log log = new Log();
+		log.setPlaque(client.getPlaque());
+		LocalDateTime now = LocalDateTime.now();
+		log.setStartAt(Timestamp.valueOf(now));
+		logRepository.save(log);
+	}
+	public void updateParkingSpotsReferential(Parking parking, Slot s) {
+		List<Slot> slots = parking.getSlots().stream().filter(slot -> s.getId().equals(slot.getId())).map(slot -> slot = s ).collect(Collectors.toList());
+		parking.setSlots(slots);
+		parkingRepository.save(parking);
+	}
+	public Boolean park(Client client, Parking parking) {
+		if(!availableSlotFor(client,parking)) {
+			System.out.println("There are not availables parking slots for "+ client.getCarType().name());
+			return false;
+		}
+		// find a slot in parking mark as occupied and write the plaque 
+		Slot s = getSlotFor(client,parking);
+		if(s == null) {
+			System.out.println("There are not availables parking slots for "+ client.getCarType().name());
+			return false;
+		}
+		parkToSlot(s, client);
+		updateParkingSpotsReferential(parking, s);
+		return true;
+	}
 	
 	public BigDecimal calculateFee(Client client, Parking parking) {
 		Log log = logRepository.findByPlaque(client.getPlaque());
-		LocalDate now = LocalDate.now();
-	    LocalDate parkingDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(log.getStartAt().getTime()), ZoneOffset.UTC).toLocalDate()  ;
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime parkingDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(log.getStartAt().getTime()), ZoneOffset.UTC)  ;
 	    long hours = ChronoUnit.HOURS.between(parkingDate, now);
 	    Slot s = getSlotFor(client,parking);
 		return s.getRule().getFix().add(s.getRule().getVariable().multiply(new BigDecimal(hours)));

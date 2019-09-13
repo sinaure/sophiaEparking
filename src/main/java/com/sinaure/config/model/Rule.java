@@ -1,6 +1,7 @@
 package com.sinaure.config.model;
 
 import java.math.BigDecimal;
+import java.util.Random;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +13,11 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "rule")
 public class Rule {
+	public Rule(BigDecimal fix, BigDecimal variable) {
+		this.id = new Random().nextLong();
+		this.fix = fix;
+		this.variable = variable;
+	}
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -1,6 +1,8 @@
 package com.sinaure.config.model;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Random;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,9 +14,20 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "log")
 public class Log {
+	public Log() {
+		this.id = new Random().nextLong();
+		LocalDateTime now = LocalDateTime.now();
+		this.startAt = Timestamp.valueOf(now);
+	}
+	public Log(String plaque) {
+		this.id = new Random().nextLong();
+		LocalDateTime now = LocalDateTime.now();
+		this.startAt = Timestamp.valueOf(now);
+		this.plaque = plaque;
+	}
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
      
     @Column
     private Timestamp startAt;
@@ -25,11 +38,11 @@ public class Log {
     @Column
     private String plaque;
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
