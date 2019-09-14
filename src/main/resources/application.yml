@@ -8,7 +8,7 @@ spring:
     active: dev
   
 email: sinaure@gmail.com
-repository: github/sinaure          
+repository: github/sinaure 
 ---
 
 spring:
@@ -17,7 +17,7 @@ spring:
     url: jdbc:postgresql://192.168.99.100:5432/sophia
     username: Jpasdetemps
     password: 65k
-    initialize: true
+    initialization-mode: always
   jpa:
     hibernate.ddl-auto: create 
     properties: 
@@ -59,23 +59,3 @@ spring:
         temp: 
           use_jdbc_metadata_defaults: false
       
-
-
-
-wordpress:
-  menus:
-    - title: Home
-      name: Home
-      path: /
-    - title: About
-      name: About
-      path: /about
-  themes:
-    default-folder: /wp-content/themes/mkyong
-  servers:
-    - ip: 127.0.0.1
-      path: /dev1
-    - ip: 127.0.0.2
-      path: /dev2
-    - ip: 127.0.0.3
-      path: /dev3

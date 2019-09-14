@@ -7,7 +7,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EnableJpaRepositories("com.sinaure.repository")
-@ComponentScan("com.sinaure.service")
+@ComponentScan( {
+		"com.sinaure.service",
+		"com.sinaure.controller"
+})
 public class Application  {
 
 

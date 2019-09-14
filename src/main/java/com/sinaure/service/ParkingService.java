@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import com.sinaure.config.model.Client;
 import com.sinaure.config.model.Log;
 import com.sinaure.config.model.Parking;
+import com.sinaure.config.model.Rule;
 import com.sinaure.config.model.Slot;
 import com.sinaure.repository.LogRepository;
 import com.sinaure.repository.ParkingRepository;
@@ -39,8 +40,12 @@ public class ParkingService {
 		return s == null ?  false :  true;
 	}
 	
-	public Slot getSlotFor(Client client, Parking parking) {
+	public Slot getOccupiedSlotByClient(Client client, Parking parking) {
 		return parking.getSlots().stream().filter(slot -> client.getPlaque().equals(slot.getPlaque())).findAny().orElse(null);
+	}
+	
+	public List<Slot> getAvailableSlotsFor(Client client, Parking parking) {
+		return parking.getSlots().stream().filter(slot -> client.getCarType().name().equals(slot.getSlot_type()) && slot.isAvailable()).collect(Collectors.toList());
 	}
 	
 	public Boolean canPark(Client client, Slot slot) {
@@ -50,12 +55,12 @@ public class ParkingService {
 		s.setAvailable(false);
 		s.setPlaque(client.getPlaque());
 		
-		
 		// write to logs
 		Log log = new Log();
 		log.setPlaque(client.getPlaque());
 		LocalDateTime now = LocalDateTime.now();
 		log.setStartAt(Timestamp.valueOf(now));
+		log.setParking(s.getParking());
 		logRepository.save(log);
 	}
 	public void updateParkingSpotsReferential(Parking parking, Slot s) {
@@ -68,24 +73,35 @@ public class ParkingService {
 			System.out.println("There are not availables parking slots for "+ client.getCarType().name());
 			return false;
 		}
-		// find a slot in parking mark as occupied and write the plaque 
-		Slot s = getSlotFor(client,parking);
-		if(s == null) {
-			System.out.println("There are not availables parking slots for "+ client.getCarType().name());
+		//if a car already parked return 
+		if(parking.getSlots().stream().anyMatch(s -> s.getPlaque()!= null && s.getPlaque().equalsIgnoreCase(client.getPlaque()))) {
+			System.out.println("a car with this plate has already been parked");
 			return false;
 		}
+		// find a slot in parking mark as occupied and write the plaque 
+		Slot s = parking.getSlots().stream().filter(slot -> slot.getSlot_type().equalsIgnoreCase(client.getCarType().name()) && slot.isAvailable()).findFirst().orElse(null);
+		if (s == null) 
+				return false;
 		parkToSlot(s, client);
 		updateParkingSpotsReferential(parking, s);
 		return true;
 	}
 	
 	public BigDecimal calculateFee(Client client, Parking parking) {
-		Log log = logRepository.findByPlaque(client.getPlaque());
+		Log log = logRepository.findByPlaque(client.getPlaque()).stream().filter(l -> l.getParking().getParking_name().equalsIgnoreCase(parking.getParking_name())).collect(Collectors.toList()).iterator().next();
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime parkingDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(log.getStartAt().getTime()), ZoneOffset.UTC)  ;
 	    long hours = ChronoUnit.HOURS.between(parkingDate, now);
-	    Slot s = getSlotFor(client,parking);
+	    Slot s = getOccupiedSlotByClient(client,parking);
 		return s.getRule().getFix().add(s.getRule().getVariable().multiply(new BigDecimal(hours)));
+	}
+	
+	public Parking updateRule(Rule rule, Long parkingId) {
+		return parkingRepository.findById(parkingId).map(parking -> {
+			parking.getSlots().forEach(slot -> slot.setRule(rule));
+            return parkingRepository.save(parking);
+        }).orElse(null);
+		//return parkingRepository.save(parking);
 	}
 	
 }

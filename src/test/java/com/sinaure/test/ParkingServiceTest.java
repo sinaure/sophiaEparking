@@ -8,6 +8,8 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -30,10 +32,13 @@ import com.sinaure.config.model.Slot;
 import com.sinaure.repository.LogRepository;
 import com.sinaure.repository.ParkingRepository;
 import com.sinaure.service.ParkingService;
+
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@ActiveProfiles("test")
 public class ParkingServiceTest {
 	
 	@Mock
@@ -56,32 +61,31 @@ public class ParkingServiceTest {
 		willingToPayclient = new Client(CarType.standard, "FF5676YY"); // is parked at slot6
 
 		Parking parking = new Parking();
-		parking.setId("ticketless parking");
 		parking.setParking_name("saint philippe");
 		
 		Rule rule = new Rule(new BigDecimal(2.5),new BigDecimal(1) );
 		Rule expenciveRule = new Rule(new BigDecimal(5),new BigDecimal(3) );
 		
 		Slot slot1 = new Slot(CarType.standard, rule);
-		slot1.setParking(parking);
 		slot1.setPlaque(clientStandard.getPlaque());
+		parking.getSlots().add(slot1);
 		
 		Slot slot2 = new Slot(CarType.standard, rule);
-		slot2.setParking(parking);
+		parking.getSlots().add(slot1);
 		
 		Slot slot3 = new Slot(CarType.standard, rule);
-		slot3.setParking(parking);
+		parking.getSlots().add(slot1);
 		
 		Slot slot4 = new Slot(CarType.standard, rule);
-		slot4.setParking(parking);
+		parking.getSlots().add(slot1);
 		
 		Slot slot5 = new Slot(CarType.electric20kw, rule);
-		slot5.setParking(parking);
 		slot4.setPlaque(clientElectric.getPlaque());
+		parking.getSlots().add(slot1);
 		
 		Slot slot6 = new Slot(CarType.standard, expenciveRule);
-		slot6.setParking(parking);
 		slot6.setPlaque(willingToPayclient.getPlaque());
+		parking.getSlots().add(slot6);
 		
 		parking.getSlots().add(slot1);
 		parking.getSlots().add(slot2);
@@ -97,23 +101,33 @@ public class ParkingServiceTest {
 		LocalDateTime h6before = now.minusHours(6);
 		logStandardCarCient1.setStartAt(Timestamp.valueOf(h6before));
 		logStandardCarCient1.setEndAt(Timestamp.valueOf(now));
+		logStandardCarCient1.setParking(parking);
+		List<Log> loglist = new ArrayList<Log>();
+		loglist.add(logStandardCarCient1);
+		
 		//client2 stay 3hours
 		Log logElectricCarCient2 = new Log();
 		logElectricCarCient2.setPlaque(clientElectric.getPlaque());
 		LocalDateTime h3before = now.minusHours(3);
 		logElectricCarCient2.setStartAt(Timestamp.valueOf(h3before));
 		logElectricCarCient2.setEndAt(Timestamp.valueOf(now));
+		logElectricCarCient2.setParking(parking);
+		List<Log> loglist2 = new ArrayList<Log>();
+		loglist2.add(logElectricCarCient2);
 		
 		//also client3 stay 3 hours but his slot use a different rule 
 		Log logElectricCarCient3 = new Log();
 		logElectricCarCient3.setPlaque(willingToPayclient.getPlaque());
 		logElectricCarCient3.setStartAt(Timestamp.valueOf(h3before));
 		logElectricCarCient3.setEndAt(Timestamp.valueOf(now));
+		logElectricCarCient3.setParking(parking);
+		List<Log> loglist3 = new ArrayList<Log>();
+		loglist3.add(logElectricCarCient3);
 
-		Mockito.when(logRepository.findByPlaque(clientStandard.getPlaque())).thenReturn(logStandardCarCient1);
-		Mockito.when(logRepository.findByPlaque(clientElectric.getPlaque())).thenReturn(logElectricCarCient2);
-		Mockito.when(logRepository.findByPlaque(willingToPayclient.getPlaque())).thenReturn(logElectricCarCient3);
-		Mockito.when(parkingRepository.findById("ticketless parking")).thenReturn(Optional.of(parking));
+		Mockito.when(logRepository.findByPlaque(clientStandard.getPlaque())).thenReturn(loglist);
+		Mockito.when(logRepository.findByPlaque(clientElectric.getPlaque())).thenReturn(loglist2);
+		Mockito.when(logRepository.findByPlaque(willingToPayclient.getPlaque())).thenReturn(loglist3);
+		Mockito.when(parkingRepository.findById(new Long(1))).thenReturn(Optional.of(parking));
 		
 		Mockito.when(parkingRepository.save(Mockito.any())).thenReturn(new Log());
 
@@ -121,17 +135,17 @@ public class ParkingServiceTest {
 
 	@Test
 	public void standardClientCanPark() {
-		Parking parking = parkingRepository.findById("ticketless parking").orElse(null);
+		Parking parking = parkingRepository.findById(new Long(1)).orElse(null);
 		assertTrue(parkingService.availableSlotFor(clientStandard, parking));
 	}
 	@Test
 	public void powerfulElectricCarsCanNotPark() {
-		Parking parking = parkingRepository.findById("ticketless parking").orElse(null);
+		Parking parking = parkingRepository.findById(new Long(1)).orElse(null);
 		assertFalse(parkingService.availableSlotFor(clientElectricPowerful, parking));
 	}
 	@Test
 	public void checkThatFeeOfaCarThatStayLongerIsHigher() {
-		Parking parking = parkingRepository.findById("ticketless parking").orElse(null);
+		Parking parking = parkingRepository.findById(new Long(1)).orElse(null);
 		BigDecimal fee1 = parkingService.calculateFee(clientStandard, parking);
 		BigDecimal fee2 = parkingService.calculateFee(clientElectric, parking);
 		//Fee of client1 will be higher than client2 because stay the double amount of time
@@ -140,7 +154,7 @@ public class ParkingServiceTest {
 	
 	@Test
 	public void checkThatIfRuleIsDifferentAlsoFeeIs() {
-		Parking parking = parkingRepository.findById("ticketless parking").orElse(null);
+		Parking parking = parkingRepository.findById(new Long(1)).orElse(null);
 		BigDecimal fee1 = parkingService.calculateFee(willingToPayclient, parking);
 		BigDecimal fee2 = parkingService.calculateFee(clientElectric, parking);
 		//Fee of client3 will be higher than client2 even if they stay 3h both
@@ -163,5 +177,6 @@ public class ParkingServiceTest {
 		mySlot.setAvailable(false);
 		assertFalse(this.parkingService.canPark(cli, mySlot));
 	}
+	
 	
 }

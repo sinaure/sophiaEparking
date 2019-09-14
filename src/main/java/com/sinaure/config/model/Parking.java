@@ -1,11 +1,16 @@
 package com.sinaure.config.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -14,18 +19,19 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "parking")
 public class Parking {
-
+	public Parking() {}
 	@Id
-	private String id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	@Column(nullable = false)
 	private String parking_name;
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -37,16 +43,17 @@ public class Parking {
 		this.parking_name = parking_name;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "rule_id")
-	private List<Slot> slots = new ArrayList<Slot>();
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "parking", cascade = CascadeType.ALL)
+	private Collection<Slot> slots = new LinkedHashSet<Slot>();
 
-	public List<Slot> getSlots() {
+	public Collection<Slot> getSlots() {
 		return slots;
 	}
 
-	public void setSlots(List<Slot> slots) {
+	public void setSlots(Collection<Slot> slots) {
 		this.slots = slots;
 	}
+	
+
 
 }

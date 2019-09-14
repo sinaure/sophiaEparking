@@ -13,6 +13,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "rule")
 public class Rule {
+	public Rule() {	}
 	public Rule(BigDecimal fix, BigDecimal variable) {
 		this.id = new Random().nextLong();
 		this.fix = fix;

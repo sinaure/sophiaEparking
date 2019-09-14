@@ -6,10 +6,15 @@ import java.util.Random;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "log")
@@ -37,6 +42,10 @@ public class Log {
     
     @Column
     private String plaque;
+    
+    @ManyToOne
+    @JoinColumn(name = "parking_code")
+    private Parking parking;
 
 	public Long getId() {
 		return id;
@@ -71,7 +80,14 @@ public class Log {
 	}
     
 
-
+	@JsonIgnore
+	public Parking getParking() {
+		return parking;
+	}
+	@JsonIgnore
+	public void setParking(Parking parking) {
+		this.parking = parking;
+	}
     
     
     
