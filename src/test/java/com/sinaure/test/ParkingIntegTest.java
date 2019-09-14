@@ -69,12 +69,6 @@ public class ParkingIntegTest {
 	}
 
 	@Test
-	public void checkMyParkingCreated() {
-		assertNotNull(parkingRepository.findAll());
-		assertNotNull(parkingRepository.findByName("saint philippe"));
-	}
-	
-	@Test
 	public void checkRuleUpdated() {
 		Parking parking = parkingRepository.findByName("saint philippe");
 		Rule r1 = new Rule(new BigDecimal(2),new BigDecimal(1));		
