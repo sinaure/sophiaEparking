@@ -1,6 +1,6 @@
 version: "3"
 services:
-  rabbitmq-sophia:
+  sophia-rabbitmq:
      image: rabbitmq:3.6.3-management
      container_name: sophia-rabbitmq
      ports:
@@ -18,14 +18,14 @@ services:
      command:
       - rabbitmq-server 
 
-  #spring-sophia:
-    #image: sinaure/parking:1.2.1
-    #container_name: spring-sophia
-    #depends_on:
-    # - rabbitmq-sophia
-    # - pg
-    #ports:
-    #  - "7788:7788"
+  sophia-spring:
+    image: asinatra/parking:1.2.1
+    container_name: sophia-spring
+    depends_on:
+     - sophia-rabbitmq
+     - pg
+    ports:
+      - "7788:7788"
       
   pg:
     image: postgres:11.1

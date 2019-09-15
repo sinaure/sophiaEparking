@@ -5,7 +5,7 @@ logging:
 
 spring:
   profiles:
-    active: dev
+    active: test
   
 email: sinaure@gmail.com
 repository: github/sinaure 
@@ -14,7 +14,7 @@ repository: github/sinaure
 spring:
   profiles: dev
   datasource: 
-    url: jdbc:postgresql://192.168.99.100:5432/sophia
+    url: jdbc:postgresql://sophia-pg:5432/sophia
     username: Jpasdetemps
     password: 65k
     initialization-mode: always
@@ -25,6 +25,13 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         temp: 
           use_jdbc_metadata_defaults: false
+  main:
+    banner-mode: 'off'        
+  rabbitmq: 
+    host: sophia-rabbitmq
+    port: 5672
+    username: Jpasdetemps
+    password: 65k       
 ---
 
 spring:
@@ -42,20 +49,8 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
         temp: 
           use_jdbc_metadata_defaults: false
----
-
-spring:
-  profiles: prod
-  datasource: 
-    url: jdbc:postgresql://sophia-pg:5432/sophia
-    username: Jpasdetemps
-    password: 65k
-    initialize: true
-  jpa:
-    hibernate.ddl-auto: update 
-    properties: 
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        temp: 
-          use_jdbc_metadata_defaults: false
-      
+  rabbitmq: 
+    host: localhost
+    port: 5679
+    username: guest
+    password: guest       

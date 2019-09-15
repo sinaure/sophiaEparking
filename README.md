@@ -6,23 +6,26 @@
 git clone https://github.com/sinaure/sophiaEparking.git
 ```
 
-* Run application using H2 db
+* Run application using H2 db  (test and dev phase)
 
 ```
 mvn clean install
 mvn spring-boot:run -Dspring-boot.run.profiles=test
 ```
 
-* start the app in dev mode (this make use of postgresql):
+* start the app in dev mode (qualification to production phase):
 
 ```
 cd docker
 make run
 ```
+API accessible at : http://YOURDOCKERHOST:7788/parking
 
 * build app and upload to docker hub :
 
 ```
+mvn clean install
+cd docker
 make build push
 ```
 
@@ -73,3 +76,7 @@ curl -g -X POST http://localhost:8080/parking/1/bill -H "Content-Type: applicati
 curl -g -X POST http://localhost:8080/parking/1/updateRule -H "Content-Type: application/json" -d '{ "fix" : 2.2, "variable" : 1.5 }'
 
 ```
+
+# Notes
+For a fully reactive behaviour a message broker (es. rabbitmq) would be suitable to easily handle the CAR-IN / CAR-OUT events.
+If you will hire me I would be pleased to implement it!
