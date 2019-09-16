@@ -64,9 +64,9 @@ public class ParkingController {
 	    @PostMapping("/{parkingId}/bill")
 	    public ResponseEntity<String> billClient(@RequestBody Client client, @PathVariable Long parkingId) {	
 	    	BigDecimal bill = parkingService.calculateFee(client, parkingRepository.findById(parkingId).orElse(null));
-	    	if(bill != null) {
-	    		rabbitTemplate.convertAndSend(Application.EXCHANGE_NAME,FirstListener.QUEUE_ROUTINGKEY, "A car "+client.getCarType().name()+" recently left re-try availability check!");
-	    	}
+//	    	if(bill != null) {
+//	    		rabbitTemplate.convertAndSend(Application.EXCHANGE_NAME,FirstListener.QUEUE_ROUTINGKEY, "A car "+client.getCarType().name()+" recently left re-try availability check!");
+//	    	}
 	    	return new ResponseEntity<String>(
 	    			"Hey dude the bill is "+bill.toPlainString()+ " Au revoir!", 
 	        	      HttpStatus.OK);
