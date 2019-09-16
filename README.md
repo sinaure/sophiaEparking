@@ -80,3 +80,5 @@ curl -g -X POST http://localhost:8080/parking/1/updateRule -H "Content-Type: app
 # Notes
 For a fully reactive behaviour a message broker (es. rabbitmq) would be suitable to easily handle the CAR-IN / CAR-OUT events.
 If you will hire me I would be pleased to implement it!
+
+https://github.com/ElderByte-/spring-boot-starter-qpid-embedded
